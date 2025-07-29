@@ -1,0 +1,391 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Grade Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .grade-A { background-color: #4ade80; }
+        .grade-B { background-color: #60a5fa; }
+        .grade-C { background-color: #fbbf24; }
+        .grade-D { background-color: #f87171; }
+        .grade-F { background-color: #ef4444; }
+        
+        .subject-card {
+            transition: all 0.3s ease;
+        }
+        .subject-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        @media (max-width: 640px) {
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-indigo-700 mb-4">Student Grade Calculator</h1>
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/02a0766d-6f52-4cbd-9d88-673219541e10.png" alt="Teacher analyzing student grades on a laptop with colorful charts and graphs" class="mx-auto rounded-lg shadow-md mb-6" />
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Calculate your academic performance with this comprehensive grade calculator. Get instant results with detailed analysis.
+            </p>
+        </div>
+
+        <!-- Calculator Form -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Enter Student Details</h2>
+            
+            <div class="space-y-4">
+                <!-- Student Info -->
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="studentName" class="block text-sm font-medium text-gray-700 mb-1">Student Name</label>
+                        <input type="text" id="studentName" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label for="studentId" class="block text-sm font-medium text-gray-700 mb-1">Student ID</label>
+                        <input type="text" id="studentId" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
+                
+                <!-- Grade Scale Reference -->
+                <div class="bg-indigo-50 p-4 rounded-lg mb-6">
+                    <h3 class="font-medium text-indigo-800 mb-2">Grade Scale Reference</h3>
+                    <div class="grid grid-cols-5 gap-2 text-center text-sm">
+                        <div class="grade-A p-2 rounded">A (90-100%)</div>
+                        <div class="grade-B p-2 rounded">B (80-89%)</div>
+                        <div class="grade-C p-2 rounded">C (70-79%)</div>
+                        <div class="grade-D p-2 rounded">D (60-69%)</div>
+                        <div class="grade-F p-2 rounded">F (Below 60%)</div>
+                    </div>
+                </div>
+                
+                <!-- Subjects Section -->
+                <div id="subjectsContainer">
+                    <div class="subject-card bg-gray-50 p-4 rounded-lg mb-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="font-medium text-gray-800">Subject 1</h3>
+                            <button class="text-red-500 hover:text-red-700 text-sm" onclick="removeSubject(this)">Remove</button>
+                        </div>
+                        <div class="grid input-grid md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-sm text-gray-700 mb-1">Subject Name</label>
+                                <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 subject-name">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-700 mb-1">Score</label>
+                                <input type="number" min="0" max="100" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 subject-score">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-700 mb-1">Max Score</label>
+                                <input type="number" min="1" max="100" value="100" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 subject-max">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-700 mb-1">Weight (%)</label>
+                                <input type="number" min="1" max="100" value="100" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 subject-weight">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Controls -->
+                <div class="flex flex-wrap gap-3 mt-6">
+                    <button onclick="addSubject()" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">
+                        Add Subject
+                    </button>
+                    <button onclick="calculateGrades()" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+                        Calculate Grades
+                    </button>
+                    <button onclick="resetForm()" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors">
+                        Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Results Section -->
+        <div id="resultsContainer" class="hidden bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Calculation Results</h2>
+            
+            <div class="mb-6">
+                <h3 class="text-lg font-medium text-gray-700 mb-2">Student Information</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-gray-50 p-3 rounded">
+                        <p class="text-sm text-gray-600">Name</p>
+                        <p id="resultName" class="font-medium"></p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded">
+                        <p class="text-sm text-gray-600">ID</p>
+                        <p id="resultId" class="font-medium"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                <h3 class="text-lg font-medium text-gray-700 mb-2">Subject Grades</h3>
+                <div id="subjectResults" class="space-y-3"></div>
+            </div>
+            
+            <div class="bg-blue-50 p-4 rounded-lg">
+                <h3 class="text-lg font-medium text-gray-700 mb-2">Overall Performance</h3>
+                <div id="overallResult" class="text-center py-6">
+                    <!-- Will be filled by JavaScript -->
+                </div>
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="bg-white p-3 rounded shadow-sm">
+                        <p class="text-sm text-gray-600">Total Score</p>
+                        <p id="totalScore" class="text-xl font-bold"></p>
+                    </div>
+                    <div class="bg-white p-3 rounded shadow-sm">
+                        <p class="text-sm text-gray-600">Average Percentage</p>
+                        <p id="averagePercentage" class="text-xl font-bold"></p>
+                    </div>
+                    <div class="bg-white p-3 rounded shadow-sm" id="finalGradeContainer">
+                        <p class="text-sm text-gray-600">Final Grade</p>
+                        <p id="finalGrade" class="text-xl font-bold"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let subjectCount = 1;
+        
+        // Add new subject field
+        function addSubject() {
+            subjectCount++;
+            const container = document.getElementById('subjectsContainer');
+            const newSubject = document.createElement('div');
+            newSubject.className = 'subject-card bg-gray-50 p-4 rounded-lg mb-4';
+            newSubject.innerHTML = `
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-medium text-gray-800">Subject ${subjectCount}</h3>
+                    <button class="text-red-500 hover:text-red-700 text-sm" onclick="removeSubject(this)">Remove</button>
+                </div>
+                <div class="grid input-grid md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm text-gray-700 mb-1">Subject Name</label>
+                        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 subject-name">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-700 mb-1">Score</label>
+                        <input type="number" min="0" max="100" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 subject-score">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-700 mb-1">Max Score</label>
+                        <input type="number" min="1" max="100" value="100" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 subject-max">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-700 mb-1">Weight (%)</label>
+                        <input type="number" min="1" max="100" value="100" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 subject-weight">
+                    </div>
+                </div>
+            `;
+            container.appendChild(newSubject);
+        }
+        
+        // Remove subject field
+        function removeSubject(button) {
+            if (document.querySelectorAll('.subject-card').length <= 1) {
+                alert("You must have at least one subject.");
+                return;
+            }
+            button.closest('.subject-card').remove();
+            updateSubjectNumbers();
+        }
+        
+        // Update subject numbers after removal
+        function updateSubjectNumbers() {
+            const subjects = document.querySelectorAll('.subject-card');
+            subjectCount = subjects.length;
+            subjects.forEach((subject, index) => {
+                subject.querySelector('h3').textContent = `Subject ${index + 1}`;
+            });
+        }
+        
+        // Reset form
+        function resetForm() {
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentId').value = '';
+            
+            const container = document.getElementById('subjectsContainer');
+            container.innerHTML = `
+                <div class="subject-card bg-gray-50 p-4 rounded-lg mb-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-medium text-gray-800">Subject 1</h3>
+                        <button class="text-red-500 hover:text-red-700 text-sm" onclick="removeSubject(this)">Remove</button>
+                    </div>
+                    <div class="grid input-grid md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm text-gray-700 mb-1">Subject Name</label>
+                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 subject-name">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-700 mb-1">Score</label>
+                            <input type="number" min="0" max="100" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 subject-score">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-700 mb-1">Max Score</label>
+                            <input type="number" min="1" max="100" value="100" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 subject-max">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-700 mb-1">Weight (%)</label>
+                            <input type="number" min="1" max="100" value="100" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 subject-weight">
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('resultsContainer').classList.add('hidden');
+            subjectCount = 1;
+        }
+        
+        // Calculate letter grade based on percentage
+        function getLetterGrade(percentage) {
+            if (percentage >= 90) return { grade: 'A', class: 'grade-A' };
+            if (percentage >= 80) return { grade: 'B', class: 'grade-B' };
+            if (percentage >= 70) return { grade: 'C', class: 'grade-C' };
+            if (percentage >= 60) return { grade: 'D', class: 'grade-D' };
+            return { grade: 'F', class: 'grade-F' };
+        }
+        
+        // Main calculation function
+        function calculateGrades() {
+            const studentName = document.getElementById('studentName').value;
+            const studentId = document.getElementById('studentId').value;
+            
+            if (!studentName || !studentId) {
+                alert('Please enter student name and ID.');
+                return;
+            }
+            
+            const subjectCards = document.querySelectorAll('.subject-card');
+            let totalPercentage = 0;
+            let totalWeight = 0;
+            let subjectHTML = '';
+            
+            for (let i = 0; i < subjectCards.length; i++) {
+                const card = subjectCards[i];
+                const name = card.querySelector('.subject-name').value || `Subject ${i + 1}`;
+                const score = parseFloat(card.querySelector('.subject-score').value);
+                const maxScore = parseFloat(card.querySelector('.subject-max').value) || 100;
+                const weight = parseFloat(card.querySelector('.subject-weight').value) || 100;
+                
+                if (isNaN(score) || isNaN(maxScore) || isNaN(weight)) {
+                    alert(`Please enter valid numbers for ${name}.`);
+                    return;
+                }
+                
+                if (score > maxScore) {
+                    alert(`Score cannot be greater than max score for ${name}.`);
+                    return;
+                }
+                
+                const percentage = (score / maxScore) * 100;
+                const weightedPercentage = percentage * (weight / 100);
+                totalPercentage += weightedPercentage;
+                totalWeight += parseFloat(weight);
+                
+                const gradeInfo = getLetterGrade(percentage);
+                
+                subjectHTML += `
+                    <div class="grid md:grid-cols-5 gap-2 items-center p-3 bg-gray-50 rounded">
+                        <div class="font-medium">${name}</div>
+                        <div>${score}/${maxScore}</div>
+                        <div>${percentage.toFixed(2)}%</div>
+                        <div>Weight: ${weight}%</div>
+                        <div class="${gradeInfo.class} text-center py-1 rounded">${gradeInfo.grade}</div>
+                    </div>
+                `;
+            }
+            
+            const finalPercentage = (totalPercentage / totalWeight) * 100;
+            const finalGradeInfo = getLetterGrade(finalPercentage);
+            
+            // Display results
+            document.getElementById('resultName').textContent = studentName;
+            document.getElementById('resultId').textContent = studentId;
+            document.getElementById('subjectResults').innerHTML = subjectHTML;
+            document.getElementById('totalScore').textContent = totalPercentage.toFixed(2);
+            document.getElementById('averagePercentage').textContent = finalPercentage.toFixed(2) + '%';
+            document.getElementById('finalGrade').textContent = finalGradeInfo.grade;
+            document.getElementById('finalGradeContainer').className = `bg-white p-3 rounded shadow-sm ${finalGradeInfo.class}`;
+            
+            document.getElementById('overallResult').innerHTML = `
+                <div class="text-3xl font-bold mb-2">${finalPercentage.toFixed(2)}%</div>
+                <div class="${finalGradeInfo.class} text-xl font-bold py-2 px-4 rounded-full inline-block">${finalGradeInfo.grade}</div>
+                <p class="mt-2 text-gray-600">Overall Grade</p>
+            `;
+            
+            document.getElementById('resultsContainer').classList.remove('hidden');
+            
+            // Generate Java calculation code
+            generateJavaCode();
+        }
+        
+        // Generate Java code for backend calculation
+        function generateJavaCode() {
+            const subjectCards = document.querySelectorAll('.subject-card');
+            let javaCode = `// Java backend implementation of the grade calculator\n`;
+            javaCode += `public class StudentGradeCalculator {\n\n`;
+            javaCode += `    public static void main(String[] args) {\n`;
+            javaCode += `        // Initialize variables\n`;
+            javaCode += `        Scanner scanner = new Scanner(System.in);\n`;
+            javaCode += `        System.out.println("Student Grade Calculator");\n\n`;
+            javaCode += `        // Number of subjects\n`;
+            javaCode += `        int numSubjects = ${subjectCards.length};\n`;
+            javaCode += `        double totalWeightedPercentage = 0;\n`;
+            javaCode += `        double totalWeight = 0;\n\n`;
+            javaCode += `        // Process each subject\n`;
+            javaCode += `        for (int i = 0; i < numSubjects; i++) {\n`;
+            javaCode += `            System.out.println("\\nSubject " + (i + 1));\n`;
+            javaCode += `            \n`;
+            javaCode += `            System.out.print("Enter score: ");\n`;
+            javaCode += `            double score = scanner.nextDouble();\n`;
+            javaCode += `            System.out.print("Enter max score: ");\n`;
+            javaCode += `            double maxScore = scanner.nextDouble();\n`;
+            javaCode += `            System.out.print("Enter weight (1-100%): ");\n`;
+            javaCode += `            double weight = scanner.nextDouble();\n`;
+            javaCode += `            \n`;
+            javaCode += `            double percentage = (score / maxScore) * 100;\n`;
+            javaCode += `            double weightedPercentage = percentage * (weight / 100);\n`;
+            javaCode += `            totalWeightedPercentage += weightedPercentage;\n`;
+            javaCode += `            totalWeight += weight;\n`;
+            javaCode += `            \n`;
+            javaCode += `            char grade = calculateGrade(percentage);\n`;
+            javaCode += `            System.out.printf("Grade: %s (%.2f%%)%n", grade, percentage);\n`;
+            javaCode += `        }\n\n`;
+            javaCode += `        // Calculate final results\n`;
+            javaCode += `        double finalPercentage = (totalWeightedPercentage / totalWeight) * 100;\n`;
+            javaCode += `        char finalGrade = calculateGrade(finalPercentage);\n\n`;
+            javaCode += `        // Display final results\n`;
+            javaCode += `        System.out.println("\\nFinal Results:");\n`;
+            javaCode += `        System.out.printf("Total Weighted Score: %.2f%n", totalWeightedPercentage);\n`;
+            javaCode += `        System.out.printf("Final Percentage: %.2f%%%n", finalPercentage);\n`;
+            javaCode += `        System.out.printf("Final Grade: %s%n", finalGrade);\n`;
+            javaCode += `    }\n\n`;
+            javaCode += `    private static char calculateGrade(double percentage) {\n`;
+            javaCode += `        if (percentage >= 90) return 'A';\n`;
+            javaCode += `        if (percentage >= 80) return 'B';\n`;
+            javaCode += `        if (percentage >= 70) return 'C';\n`;
+            javaCode += `        if (percentage >= 60) return 'D';\n`;
+            javaCode += `        return 'F';\n`;
+            javaCode += `    }\n`;
+            javaCode += `}\n`;
+            
+            console.log(javaCode);
+        }
+    </script>
+</body>
+</html>
+
